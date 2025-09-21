@@ -48,9 +48,9 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 
 
-// app.get("/", (req, res) => {
-//     res.send("hyy i am root");
-// });
+app.get("/", (req, res) => {
+    res.send("Hello welcome to wanderlust ");
+});
 
 const store = MongoStore.create({
     mongoUrl: dbUrl,
