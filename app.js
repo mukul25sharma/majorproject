@@ -1,8 +1,8 @@
-if (process.env.NODE_ENV !== "production") {
-    require("dotenv").config();
-}
+// if (process.env.NODE_ENV !== "production") {
+//     require("dotenv").config();
+// }
 
-console.log(process.env);
+// console.log(process.env);
 
 
 const express = require("express");
@@ -25,8 +25,8 @@ const userRouter = require("./routes/user.js");
 
 
 
-//const MONGO_URL = "mongodb://127.0.0.1/wanderlust";
-const dbUrl = process.env.ATLASDB_URL;
+const MONGO_URL = "mongodb://127.0.0.1/wanderlust";
+//const dbUrl = process.env.ATLASDB_URL;
 
 main().then(() => {
     console.log("connected to DB");
@@ -36,7 +36,7 @@ main().then(() => {
     });
 
 async function main() {
-    await mongoose.connect(dbUrl);//local database k lir dbUrl ki jgh vhi MONGO_url pass karna
+    await mongoose.connect(MONGO_URL);//local database k lir dbUrl ki jgh vhi MONGO_url pass karna
 };
 
 app.set("view engine", "ejs");
@@ -53,7 +53,7 @@ app.get("/", (req, res) => {
 });
 
 const store = MongoStore.create({
-    mongoUrl: dbUrl,
+    mongoUrl: MONGO_URL,
     crypto:{
         secret:process.env.SECRET,
     },
