@@ -26,7 +26,7 @@ const userRouter = require("./routes/user.js");
 
 
 const MONGO_URL = "mongodb://127.0.0.1/wanderlust";
-//const dbUrl = process.env.ATLASDB_URL;
+const dbUrl = process.env.ATLASDB_URL;
 
 main().then(() => {
     console.log("connected to DB");
@@ -36,7 +36,7 @@ main().then(() => {
     });
 
 async function main() {
-    await mongoose.connect(MONGO_URL);//local database k lir dbUrl ki jgh vhi MONGO_url pass karna
+    await mongoose.connect(dbUrl);//local database k lir dbUrl ki jgh vhi MONGO_url pass karna
 };
 
 app.set("view engine", "ejs");
@@ -50,11 +50,11 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 
 const store = MongoStore.create({
-    mongoUrl: MONGO_URL,
-    crypto:{
-        secret:process.env.SECRET,
+    mongoUrl: dbUrl,
+    crypto: {
+        secret: process.env.SECRET,
     },
-    touchAfter:24*3600,
+    touchAfter: 24 * 3600,
 });
 
 store.on("error", ()=>{
@@ -132,20 +132,6 @@ app.delete("/listings/:id/reviews/:reviewId", async (req, res) => {
 
     res.redirect(`/listings/${id}`);
 });
-
-// app.get("/testListing", async (req,res)=>{
-//     let sampleListing = new Listing({
-//         title : "My new villa",
-//         description : "By new beach",
-//         price: 1200,
-//         location : "calangute, goa",
-//         county : "india",
-//     });
-
-//     await sampleListing.save();
-//     console.log("sample was saved");
-//     res.send("successfull testing");
-// });
 
 app.listen(8080, () => {
     console.log("listening on port 8080");
