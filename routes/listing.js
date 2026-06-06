@@ -47,15 +47,28 @@ router.get("/:id", async (req , res) =>{
 
 
 //create route
-router.post("/", async (req,res) =>{
-    // let {title, description, image, price, country, location} = req.body;  one way another is
-    //let listing = req.body.listing;
-    const newListing = new Listing(req.body.listing);
+router.post(
+  "/",
+  isLoggedIn,
+  upload.single("listing[image]"),
+  async (req, res) => {
+    let newListing = new Listing(req.body.listing);
+
     newListing.owner = req.user._id;
-    await newListing.save(); 
-    req.flash("success", "new listing created");
+
+    if (req.file) {
+      newListing.image = {
+        url: req.file.path,
+        filename: req.file.filename,
+      };
+    }
+
+    await newListing.save();
+
+    req.flash("success", "New listing created");
     res.redirect("/listings");
-}); 
+  }
+);
 
 //edit rout
 router.get("/:id/edit",isLoggedIn, async (req , res)=>{
@@ -66,27 +79,40 @@ res.render("listings/edit.ejs", {listing});
 });
 
 // update route
-router.put("/:id",isLoggedIn, async (req, res) => {
-  let { id } = req.params;
 
-  // spread data
-  let data = { ...req.body.listing };
+router.put(
+  "/:id",
+  isLoggedIn,
+  upload.single("listing[image]"),
+  async (req, res) => {
+    let { id } = req.params;
 
-  // agar image exist hai aur url khali hai → to image ko update mat karo
-  if (data.image && data.image.url && data.image.url.trim() === "") {
-    delete data.image;
+    let listingData = req.body.listing;
+
+    let updatedListing = await Listing.findByIdAndUpdate(
+      id,
+      { ...listingData },
+      { runValidators: true, new: true }
+    );
+
+    // Agar nayi image upload hui hai to update karo
+    if (req.file) {
+      updatedListing.image = {
+        url: req.file.path,
+        filename: req.file.filename,
+      };
+
+      await updatedListing.save();
+    }
+console.log("Updated Image:", updatedListing.image);
+    req.flash("success", "Listing updated successfully");
+    res.redirect(`/listings/${id}`);
   }
-
-  await Listing.findByIdAndUpdate(id, data, { runValidators: true });
-   req.flash("success", "listing updated");
-  res.redirect(`/listings/${id}`); // edit ke baad show page pe le jao
-});
-
+);
 //delete route
 router.delete("/:id", isLoggedIn , async (req, res)=>{
     let {id} = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
     req.flash("success", "listing deleted");
     res.redirect("/listings");
 
