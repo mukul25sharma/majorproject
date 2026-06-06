@@ -48,7 +48,6 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 
 
-
 const store = MongoStore.create({
     mongoUrl: MONGO_URL,
     crypto:{
@@ -104,6 +103,7 @@ app.use("/", userRouter);
 
 
 
+console.log("ATLASDB_URL =", process.env.ATLASDB_URL);
 
 
 //reviews post rout
