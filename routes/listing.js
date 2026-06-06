@@ -12,15 +12,15 @@ const multer  = require('multer');
 const {storage} = require("../cloudConfig.js");
 const upload = multer({storage});
 
-router.route("/")
-.post(
-  isLoggedIn,
-  upload.single("listing[image]"),
-   //validateListing,
-  (req, res) => {
-    listingController.createListing(req, res);
-  }
-);
+// router.route("/")
+// .post(
+//   isLoggedIn,
+//   upload.single("listing[image]"),
+//    //validateListing,
+//   (req, res) => {
+//     listingController.createListing(req, res);
+//   }
+// );
 
 //index route
 router.get("/", async (req,res)=>{

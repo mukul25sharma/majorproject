@@ -4,7 +4,7 @@
 
 // console.log(process.env);
 
-
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -48,9 +48,6 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 
 
-app.get("/", (req, res) => {
-    res.send("Hello welcome to wanderlust ");
-});
 
 const store = MongoStore.create({
     mongoUrl: MONGO_URL,
@@ -98,8 +95,14 @@ app.use((req, res, next) => {
 // res.send(registeredUser);
 // });
 
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
+
 app.use("/listings", listingRouter);
 app.use("/", userRouter);
+
+
 
 
 
